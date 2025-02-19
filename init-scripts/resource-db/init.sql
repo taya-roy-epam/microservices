@@ -1,0 +1,4 @@
+CREATE TABLE resource (
+    id SERIAL PRIMARY KEY,
+    file BIGINT NOT NULL
+);

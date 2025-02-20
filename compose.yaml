@@ -4,6 +4,8 @@ services:
   resource-db:
     image: postgres:16-alpine
     container_name: resource-db
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB_RESOURCE}
       - POSTGRES_USER=${POSTGRES_USER_RESOURCE}
@@ -16,6 +18,8 @@ services:
   song-db:
     image: postgres:16-alpine
     container_name: song-db
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DB_SONG}
       - POSTGRES_USER=${POSTGRES_USER_SONG}
@@ -28,8 +32,10 @@ services:
   resource-service:
     build: ./resource-service
     container_name: resource-service
+    env_file:
+      - .env
     environment:
-      - SPRING_DATASOURCE_URL=${RESOURCE_DB_URL}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL_RESOURCE}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER_RESOURCE}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_RESOURCE}
     ports:
@@ -40,6 +46,8 @@ services:
   song-service:
     build: ./song-service
     container_name: song-service
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL_SONG}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER_SONG}

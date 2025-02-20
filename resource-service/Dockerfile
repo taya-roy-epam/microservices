@@ -25,6 +25,8 @@ WORKDIR /app
 # Copy the built JAR file from the build stagecd
 COPY --from=build /app/target/*.jar app.jar
 
+ENV SPRING_PROFILES_ACTIVE=docker
+
 # Expose the application port
 EXPOSE 8080
 

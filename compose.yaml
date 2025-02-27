@@ -39,21 +39,45 @@ services:
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER_RESOURCE}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_RESOURCE}
       - SONGS_SERVICE_URL=${SONG_SERVICE_URL}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=${EUREKA_CLIENT_SERVICE_URL}
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - resource-db
 
   song-service:
     build: ./song-service
-    container_name: song-service
     env_file:
       - .env
     environment:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL_SONG}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER_SONG}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD_SONG}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=${EUREKA_CLIENT_SERVICE_URL}
+    deploy:
+      replicas: 2
     ports:
-      - "8081:8081"
+      - "8082-8083:8082"
     depends_on:
       - song-db
+
+  eureka-server:
+    image: eureka-server
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    env_file:
+      - .env
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=${EUREKA_CLIENT_SERVICE_URL}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+      - resource-service
+      - song-service
